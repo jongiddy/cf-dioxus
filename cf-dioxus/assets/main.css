@@ -1,0 +1,9 @@
+* {
+  font-size: 24px
+}
+
+button {
+  display: block;
+  height: 50px;
+  width: 50px;
+}
