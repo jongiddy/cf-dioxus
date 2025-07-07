@@ -1,0 +1,7 @@
+compatibility_date = "2025-07-07"
+
+# The name of the Cloudflare Pages service.
+name = "cf-dioxus-pages"
+
+# The bundle location for the Dioxus project, relative to this file.
+pages_build_output_dir = "../cf-dioxus/target/dx/cf-dioxus/release/web/public"
