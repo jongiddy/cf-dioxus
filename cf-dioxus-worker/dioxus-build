@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e -x
+
+cd ../cf-dioxus
+
+dx bundle --release --platform web
+
+# Firefox attempts to prefetch the favicon from /favicon.ico - add the icon to
+# the top-level so it does not activate a Worker instance.
+cp assets/favicon.ico target/dx/cf-dioxus/release/web/public/favicon.ico
+
+# Add a robots.txt so crawlers do not activate a Worker. Change this if you
+# want crawlers to index your site.
+cat > target/dx/cf-dioxus/release/web/public/robots.txt <<EOF
+User-agent: *
+Disallow: /
+EOF
