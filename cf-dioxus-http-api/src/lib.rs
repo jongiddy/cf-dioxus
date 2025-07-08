@@ -1,0 +1,38 @@
+use cf_dioxus::api::{MultiplyRequest, MultiplyResponse};
+use worker::*;
+
+#[event(fetch)]
+async fn fetch(req: HttpRequest, env: Env, _ctx: Context) -> Result<HttpResponse> {
+    console_error_panic_hook::set_once();
+
+    let uri = req.uri();
+
+    match uri.path() {
+        "/api/multiply" => {
+            // Returning `Err` produces a 500 Internal Server Error. Construct
+            // an OK response if a different status code is required.
+            let Some(query) = uri.query() else {
+                return Ok(http::Response::builder()
+                    .status(http::StatusCode::BAD_REQUEST)
+                    .body(Body::empty())?);
+            };
+            let Ok(request) = serde_urlencoded::from_str::<MultiplyRequest>(query) else {
+                return Ok(http::Response::builder()
+                    .status(http::StatusCode::BAD_REQUEST)
+                    .body(Body::empty())?);
+            };
+            let result = request.a * request.b;
+            let body = serde_json::to_string(&MultiplyResponse { result })?;
+            Ok(HttpResponse::new(Body::from_stream(
+                futures::stream::once(async { Ok::<_, Error>(body) }),
+            )?))
+        }
+        _ => {
+            // Usually static resources will be returned without invoking the
+            // worker. However, non-browser requests may invoke the worker.
+            // This performs the `single-page-application` behavior of returning
+            // the named static asset or, if not found, the `index.html` file.
+            env.assets("ASSETS")?.fetch(uri.to_string(), None).await
+        }
+    }
+}

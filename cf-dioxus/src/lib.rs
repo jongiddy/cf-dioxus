@@ -24,7 +24,24 @@ pub fn App() -> Element {
 fn Home() -> Element {
     let mut m1 = use_signal(|| 1);
     let mut m2 = use_signal(|| 1);
+
+    #[cfg(not(feature = "api"))]
     let product = use_memo(move || m1() * m2());
+
+    #[cfg(feature = "api")]
+    let product = {
+        let multiplication = use_resource(move || api::multiply(m1(), m2()));
+        let mut product = use_signal(|| "?".to_string());
+        use_effect(move || {
+            product.set(match &*multiplication.value().read() {
+                Some(Ok(value)) => value.to_string(),
+                Some(Err(err)) => err.to_string(),
+                None => "?".to_string(),
+            })
+        });
+        product
+    };
+
     rsx! {
         div {
             display: "flex",
@@ -88,5 +105,42 @@ fn Home() -> Element {
             }
 
          }
+    }
+}
+
+#[cfg(feature = "api")]
+pub mod api {
+    use reqwest::{get, Url};
+
+    #[derive(serde::Deserialize, serde::Serialize)]
+    pub struct MultiplyRequest {
+        pub a: i32,
+        pub b: i32,
+    }
+
+    #[derive(serde::Deserialize, serde::Serialize)]
+    pub struct MultiplyResponse {
+        pub result: i32,
+    }
+
+    pub async fn multiply(a: i32, b: i32) -> Result<i32, std::io::Error> {
+        let location = ::web_sys::window().unwrap().location().origin().unwrap();
+        let mut url = Url::parse(&location).map_err(std::io::Error::other)?;
+        url.set_path("api/multiply");
+        let query =
+            serde_urlencoded::to_string(MultiplyRequest { a, b }).map_err(std::io::Error::other)?;
+        url.set_query(Some(&query));
+        let response = get(url).await.map_err(std::io::Error::other)?;
+
+        if !response.status().is_success() {
+            return Err(std::io::Error::other(response.status().to_string()));
+        }
+
+        let multiplication = response
+            .json::<MultiplyResponse>()
+            .await
+            .map_err(std::io::Error::other)?;
+
+        Ok(multiplication.result)
     }
 }
