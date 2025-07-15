@@ -8,10 +8,11 @@ This repo consists of the following directories:
 - `cf-dioxus-pages`: Installation of the Dioxus project in Cloudflare Pages (no SSR or API calls).
 - `cf-dioxus-worker`: Installation of the Dioxus project in Cloudflare Workers (no SSR or API calls) - this corresponds to the Cloudflare Pages configuration.
 - `cf-dioxus-http-api`: Installation of the Dioxus project in Cloudflare Workers using `http` and an existing API.
+- `cf-dioxus-axum-api`: Installation of the Dioxus project in Cloudflare Workers using `axum` and an existing API.
 
 The installations here keep the Dioxus project separate from the Cloudflare
 deployment method. This allows easy application of alternative methods. To make
-this work more cleanly, most of the Dixous code is moved into a `lib.rs` file,
+this work more cleanly, most of the Dioxus code is moved into a `lib.rs` file,
 with just the `main` function remaining in the `main.rs` file. This allows the
 installations to use the Dioxus project as a library.
 

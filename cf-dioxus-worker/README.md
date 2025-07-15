@@ -26,10 +26,9 @@ binding = "ASSETS"
 not_found_handling = "single-page-application"
 ```
 
-Add the Dioxus crate and your Dioxus project directory as dependencies in the worker `Cargo.toml`:
+Add your Dioxus project directory as dependencies in the worker `Cargo.toml`:
 ```toml
 cf-dioxus = { path = "../cf-dioxus" }
-dioxus = { version = "0.6", features = ["router"] }
 ```
 
 Change `src/lib.rs` to return static assets if the Worker is invoked. For most

@@ -3,8 +3,8 @@ Support for API calls (not server functions)
 This directory was created using the command
 ```sh
 $ cargo generate cloudflare/workers-rs
-  Which template should be expanded? · templates/hello-world-http
-  Project Name: cf-dioxus-http-api
+  Which template should be expanded? · templates/axum
+  Project Name: cf-dioxus-axum-api
 ```
 
 Changes to the `cf-dioxus-worker` configuration:
@@ -14,11 +14,9 @@ Changes to the `cf-dioxus-worker` configuration:
 cf-dioxus = { path = "../cf-dioxus", features = ["api"] }
 ```
 
-- add some additional crates for the API implementation:
+- add some additional features for the API implementation:
 ```toml
-futures = "0.3"
-serde_json = "1"
-serde_urlencoded = "0.7"
+axum = { version = "0.8", default-features = false, features = ["query", "json"]}
 ```
 
 - add the `api` feature when building the cf-dioxus client:

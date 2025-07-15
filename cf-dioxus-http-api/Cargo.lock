@@ -120,7 +120,6 @@ version = "0.1.0"
 dependencies = [
  "cf-dioxus",
  "console_error_panic_hook",
- "dioxus",
  "futures",
  "http",
  "serde_json",
