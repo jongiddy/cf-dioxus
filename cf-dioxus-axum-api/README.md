@@ -39,7 +39,7 @@ $ npx wrangler dev
 ```
 and [test the code in the browser](http://localhost:8787/). Press Ctrl-C to exit.
 
-## Deploy to Cloudflare Pages
+## Deploy to Cloudflare Workers
 
 Run
 ```sh
