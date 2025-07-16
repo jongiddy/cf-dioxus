@@ -3,11 +3,11 @@ use std::sync::LazyLock;
 use axum::{extract::Query, http, routing::get, Extension, Json};
 use cf_dioxus::api::{MultiplyRequest, MultiplyResponse};
 use tower_service::Service as _;
-use worker::{event, Context, Env, HttpRequest};
+use worker::{event, Context, Env};
 
 #[event(fetch)]
 async fn fetch(
-    mut req: HttpRequest,
+    mut req: http::Request<worker::Body>,
     env: Env,
     _ctx: Context,
 ) -> worker::Result<http::Response<axum::body::Body>> {

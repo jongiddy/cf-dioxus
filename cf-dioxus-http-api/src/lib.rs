@@ -1,8 +1,12 @@
 use cf_dioxus::api::{MultiplyRequest, MultiplyResponse};
-use worker::{event, Context, Env, HttpRequest, HttpResponse};
+use worker::{event, Context, Env};
 
 #[event(fetch)]
-async fn fetch(req: HttpRequest, env: Env, _ctx: Context) -> worker::Result<HttpResponse> {
+async fn fetch(
+    req: http::Request<worker::Body>,
+    env: Env,
+    _ctx: Context,
+) -> worker::Result<http::Response<worker::Body>> {
     console_error_panic_hook::set_once();
 
     let uri = req.uri();
@@ -23,7 +27,7 @@ async fn fetch(req: HttpRequest, env: Env, _ctx: Context) -> worker::Result<Http
             };
             let result = request.a * request.b;
             let body = serde_json::to_string(&MultiplyResponse { result })?;
-            Ok(HttpResponse::new(worker::Body::from_stream(
+            Ok(http::Response::new(worker::Body::from_stream(
                 futures::stream::once(async { Ok::<_, worker::Error>(body) }),
             )?))
         }

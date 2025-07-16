@@ -24,7 +24,9 @@ axum = { version = "0.8", default-features = false, features = ["query", "json"]
 dx bundle --release --platform web --features api
 ```
 
-- add code to `src/lib.rs` to handle the API calls.
+- add code to `src/lib.rs` to handle the API calls. Once the `http` crate is available, it is
+generally easier to expand the type aliases `worker::HttpRequest` to `http::Request<worker::Body>`
+and `worker::HttpResponse` to `http::Response<worker::Body>`.
 
 - add `run_worker_first = [ "/api/*" ]` to `wrangler.toml` to ensure that API calls go to the worker
 rather than returning the index page.
