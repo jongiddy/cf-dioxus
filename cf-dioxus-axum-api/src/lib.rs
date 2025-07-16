@@ -2,15 +2,15 @@ use std::sync::LazyLock;
 
 use axum::{extract::Query, http, routing::get, Extension, Json};
 use cf_dioxus::api::{MultiplyRequest, MultiplyResponse};
-use tower_service::Service;
-use worker::*;
+use tower_service::Service as _;
+use worker::{event, Context, Env, HttpRequest};
 
 #[event(fetch)]
 async fn fetch(
     mut req: HttpRequest,
     env: Env,
     _ctx: Context,
-) -> Result<http::Response<axum::body::Body>> {
+) -> worker::Result<http::Response<axum::body::Body>> {
     console_error_panic_hook::set_once();
 
     req.extensions_mut().insert(env);
@@ -33,7 +33,7 @@ async fn multiply(request: Query<MultiplyRequest>) -> Json<MultiplyResponse> {
 async fn fallback(
     uri: http::Uri,
     Extension(env): Extension<Env>,
-) -> std::result::Result<http::Response<axum::body::Body>, (http::StatusCode, String)> {
+) -> Result<http::Response<axum::body::Body>, (http::StatusCode, String)> {
     // Usually static resources will be returned without invoking the
     // worker. However, non-browser requests may invoke the worker.
     // This performs the `single-page-application` behavior of returning

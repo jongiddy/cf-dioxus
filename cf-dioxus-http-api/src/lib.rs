@@ -1,8 +1,8 @@
 use cf_dioxus::api::{MultiplyRequest, MultiplyResponse};
-use worker::*;
+use worker::{event, Context, Env, HttpRequest, HttpResponse};
 
 #[event(fetch)]
-async fn fetch(req: HttpRequest, env: Env, _ctx: Context) -> Result<HttpResponse> {
+async fn fetch(req: HttpRequest, env: Env, _ctx: Context) -> worker::Result<HttpResponse> {
     console_error_panic_hook::set_once();
 
     let uri = req.uri();
@@ -14,17 +14,17 @@ async fn fetch(req: HttpRequest, env: Env, _ctx: Context) -> Result<HttpResponse
             let Some(query) = uri.query() else {
                 return Ok(http::Response::builder()
                     .status(http::StatusCode::BAD_REQUEST)
-                    .body(Body::empty())?);
+                    .body(worker::Body::empty())?);
             };
             let Ok(request) = serde_urlencoded::from_str::<MultiplyRequest>(query) else {
                 return Ok(http::Response::builder()
                     .status(http::StatusCode::BAD_REQUEST)
-                    .body(Body::empty())?);
+                    .body(worker::Body::empty())?);
             };
             let result = request.a * request.b;
             let body = serde_json::to_string(&MultiplyResponse { result })?;
-            Ok(HttpResponse::new(Body::from_stream(
-                futures::stream::once(async { Ok::<_, Error>(body) }),
+            Ok(HttpResponse::new(worker::Body::from_stream(
+                futures::stream::once(async { Ok::<_, worker::Error>(body) }),
             )?))
         }
         _ => {

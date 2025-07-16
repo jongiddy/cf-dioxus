@@ -1,7 +1,7 @@
-use worker::*;
+use worker::{event, Context, Env, HttpRequest, HttpResponse};
 
 #[event(fetch)]
-async fn fetch(req: HttpRequest, env: Env, _ctx: Context) -> Result<HttpResponse> {
+async fn fetch(req: HttpRequest, env: Env, _ctx: Context) -> worker::Result<HttpResponse> {
     console_error_panic_hook::set_once();
 
     let uri = req.uri();
