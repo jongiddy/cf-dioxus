@@ -22,21 +22,24 @@ pub fn App() -> Element {
 /// Home page
 #[component]
 fn Home() -> Element {
-    let mut m1 = use_signal(|| 1);
-    let mut m2 = use_signal(|| 1);
+    let mut m1 = use_signal(|| 1i32);
+    let mut m2 = use_signal(|| 1i32);
 
     #[cfg(not(feature = "api"))]
-    let product = use_memo(move || m1() * m2());
+    let product = use_memo(move || match m1().checked_mul(m2()) {
+        Some(product) => format!("= {product}"),
+        None => "overflow".to_string(),
+    });
 
     #[cfg(feature = "api")]
     let product = {
         let multiplication = use_resource(move || api::multiply(m1(), m2()));
-        let mut product = use_signal(|| "?".to_string());
+        let mut product = use_signal(|| "= ?".to_string());
         use_effect(move || {
             product.set(match &*multiplication.value().read() {
-                Some(Ok(value)) => value.to_string(),
+                Some(Ok(value)) => format!("= {value}"),
                 Some(Err(err)) => err.to_string(),
-                None => "?".to_string(),
+                None => "= ?".to_string(),
             })
         });
         product
@@ -84,7 +87,7 @@ fn Home() -> Element {
                 }
                 div {
                     text_align: "center",
-                    "= {product}"
+                    "{product}"
                 }
 
                 // Bottom row

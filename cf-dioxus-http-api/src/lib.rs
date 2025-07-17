@@ -33,7 +33,11 @@ async fn fetch(
                     .status(http::StatusCode::BAD_REQUEST)
                     .body(worker::Body::empty())?);
             };
-            let result = request.a * request.b;
+            let Some(result) = request.a.checked_mul(request.b) else {
+                return Ok(http::Response::builder()
+                    .status(http::StatusCode::BAD_REQUEST)
+                    .body(worker::Body::empty())?);
+            };
             let body = serde_json::to_string(&MultiplyResponse { result })?;
             Ok(http::Response::builder()
                 .header(http::header::CONTENT_TYPE, "application/json")
