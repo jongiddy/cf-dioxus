@@ -20,7 +20,12 @@ async fn fetch(
 
 static ROUTER: LazyLock<axum::Router> = LazyLock::new(|| {
     axum::Router::new()
-        .route("/api/multiply", get(multiply))
+        .nest(
+            "/api",
+            axum::Router::new()
+                .route("/multiply", get(multiply))
+                .fallback(async || http::StatusCode::NOT_FOUND),
+        )
         .fallback(fallback)
 });
 
