@@ -33,23 +33,28 @@ async fn fetch(
                     .status(http::StatusCode::BAD_REQUEST)
                     .body(worker::Body::empty())?);
             };
-            let Some(result) = request.a.checked_mul(request.b) else {
-                return Ok(http::Response::builder()
+
+            match request.a.checked_mul(request.b) {
+                Some(result) => {
+                    let body = serde_json::to_string(&MultiplyResponse { result })?;
+                    Ok(http::Response::builder()
+                        .header(http::header::CONTENT_TYPE, "application/json")
+                        .body(worker::Body::from_stream(stream::once(async {
+                            Ok::<_, worker::Error>(body)
+                        }))?)?)
+                }
+                None => Ok(http::Response::builder()
                     .status(http::StatusCode::BAD_REQUEST)
-                    .body(worker::Body::empty())?);
-            };
-            let body = serde_json::to_string(&MultiplyResponse { result })?;
-            Ok(http::Response::builder()
-                .header(http::header::CONTENT_TYPE, "application/json")
-                .body(worker::Body::from_stream(stream::once(async {
-                    Ok::<_, worker::Error>(body)
-                }))?)?)
+                    .body(worker::Body::empty())?),
+            }
         }
+
         path if path.starts_with("/api/") => {
             return Ok(http::Response::builder()
                 .status(http::StatusCode::NOT_FOUND)
                 .body(worker::Body::empty())?)
         }
+
         _ => {
             // Usually static resources will be returned without invoking the
             // worker. However, non-browser requests may invoke the worker.

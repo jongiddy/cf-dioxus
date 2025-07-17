@@ -32,10 +32,10 @@ static ROUTER: LazyLock<axum::Router> = LazyLock::new(|| {
 async fn multiply(
     request: Query<MultiplyRequest>,
 ) -> Result<Json<MultiplyResponse>, http::StatusCode> {
-    let Some(result) = request.a.checked_mul(request.b) else {
-        return Err(http::StatusCode::BAD_REQUEST);
-    };
-    Ok(Json(MultiplyResponse { result }))
+    match request.a.checked_mul(request.b) {
+        Some(result) => Ok(Json(MultiplyResponse { result })),
+        None => Err(http::StatusCode::BAD_REQUEST),
+    }
 }
 
 #[worker::send] // See https://github.com/cloudflare/workers-rs/issues/485
