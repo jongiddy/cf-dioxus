@@ -34,9 +34,9 @@ async fn fetch(
                     .body(worker::Body::empty())?);
             };
 
-            match request.a.checked_mul(request.b) {
-                Some(result) => {
-                    let body = serde_json::to_string(&MultiplyResponse { result })?;
+            match request.factor1.checked_mul(request.factor2) {
+                Some(product) => {
+                    let body = serde_json::to_string(&MultiplyResponse { product })?;
                     Ok(http::Response::builder()
                         .header(http::header::CONTENT_TYPE, "application/json")
                         .body(worker::Body::from_stream(stream::once(async {

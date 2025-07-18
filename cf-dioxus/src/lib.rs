@@ -22,27 +22,27 @@ pub fn App() -> Element {
 /// Home page
 #[component]
 fn Home() -> Element {
-    let mut m1 = use_signal(|| 1i32);
-    let mut m2 = use_signal(|| 1i32);
+    let mut factor1 = use_signal(|| 1i32);
+    let mut factor2 = use_signal(|| 1i32);
 
     #[cfg(not(feature = "api"))]
-    let product = use_memo(move || match m1().checked_mul(m2()) {
+    let answer = use_memo(move || match factor1().checked_mul(factor2()) {
         Some(product) => format!("= {product}"),
         None => "overflow".to_string(),
     });
 
     #[cfg(feature = "api")]
-    let product = {
-        let multiplication = use_resource(move || api::multiply(m1(), m2()));
-        let mut product = use_signal(|| "= ?".to_string());
+    let answer = {
+        let multiplication = use_resource(move || api::multiply(factor1(), factor2()));
+        let mut answer = use_signal(|| "= ?".to_string());
         use_effect(move || {
-            product.set(match &*multiplication.value().read() {
-                Some(Ok(value)) => format!("= {value}"),
+            answer.set(match &*multiplication.value().read() {
+                Some(Ok(product)) => format!("= {product}"),
                 Some(Err(err)) => err.to_string(),
                 None => "= ?".to_string(),
             })
         });
-        product
+        answer
     };
 
     rsx! {
@@ -59,14 +59,14 @@ fn Home() -> Element {
                 // Top row
                 div {
                     button {
-                        onclick: move |_| {m1 += 1;},
+                        onclick: move |_| { factor1 += 1; },
                         "+"
                     }
                 }
                 div {}
                 div {
                     button {
-                        onclick: move |_| {m2 += 1;},
+                        onclick: move |_| { factor2 += 1; },
                         "+"
                     }
                 }
@@ -74,33 +74,29 @@ fn Home() -> Element {
 
                 // Middle row
                 div {
-                    text_align: "center",
-                    "{m1}"
+                    "{factor1}"
                 }
                 div {
-                    text_align: "center",
                     dangerous_inner_html: "&times;"
                 }
                 div {
-                    text_align: "center",
-                    "{m2}"
+                    "{factor2}"
                 }
                 div {
-                    text_align: "center",
-                    "{product}"
+                    "{answer}"
                 }
 
                 // Bottom row
                 div {
                     button {
-                        onclick: move |_| {m1 -= 1;},
+                        onclick: move |_| { factor1 -= 1; },
                         "-"
                     }
                 }
                 div {}
                 div {
                     button {
-                        onclick: move |_| {m2 -= 1;},
+                        onclick: move |_| { factor2 -= 1; },
                         "-"
                     }
                 }
@@ -115,21 +111,21 @@ fn Home() -> Element {
 pub mod api {
     #[derive(serde::Deserialize, serde::Serialize)]
     pub struct MultiplyRequest {
-        pub a: i32,
-        pub b: i32,
+        pub factor1: i32,
+        pub factor2: i32,
     }
 
     #[derive(serde::Deserialize, serde::Serialize)]
     pub struct MultiplyResponse {
-        pub result: i32,
+        pub product: i32,
     }
 
-    pub async fn multiply(a: i32, b: i32) -> Result<i32, std::io::Error> {
+    pub async fn multiply(factor1: i32, factor2: i32) -> Result<i32, std::io::Error> {
         let location = ::web_sys::window().unwrap().location().origin().unwrap();
         let mut url = reqwest::Url::parse(&location).map_err(std::io::Error::other)?;
         url.set_path("api/multiply");
-        let query =
-            serde_urlencoded::to_string(MultiplyRequest { a, b }).map_err(std::io::Error::other)?;
+        let query = serde_urlencoded::to_string(MultiplyRequest { factor1, factor2 })
+            .map_err(std::io::Error::other)?;
         url.set_query(Some(&query));
         let response = reqwest::get(url).await.map_err(std::io::Error::other)?;
 
@@ -142,6 +138,6 @@ pub mod api {
             .await
             .map_err(std::io::Error::other)?;
 
-        Ok(multiplication.result)
+        Ok(multiplication.product)
     }
 }

@@ -32,8 +32,8 @@ static ROUTER: LazyLock<axum::Router> = LazyLock::new(|| {
 async fn multiply(
     request: Query<MultiplyRequest>,
 ) -> Result<Json<MultiplyResponse>, http::StatusCode> {
-    match request.a.checked_mul(request.b) {
-        Some(result) => Ok(Json(MultiplyResponse { result })),
+    match request.factor1.checked_mul(request.factor2) {
+        Some(product) => Ok(Json(MultiplyResponse { product })),
         None => Err(http::StatusCode::BAD_REQUEST),
     }
 }
