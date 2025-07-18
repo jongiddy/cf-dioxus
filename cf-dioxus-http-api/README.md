@@ -1,4 +1,4 @@
-Support for API calls (not server functions)
+## Support for API calls (not server functions)
 
 This directory was created using the command
 ```sh
@@ -23,7 +23,7 @@ serde_urlencoded = "0.7"
 ```
 
 - add the `api` feature when building the cf-dioxus client:
-```
+```sh
 dx bundle --release --platform web --features api
 ```
 

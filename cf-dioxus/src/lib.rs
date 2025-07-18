@@ -25,7 +25,7 @@ fn Home() -> Element {
     let mut factor1 = use_signal(|| 1i32);
     let mut factor2 = use_signal(|| 1i32);
 
-    #[cfg(not(feature = "api"))]
+    #[cfg(not(any(feature = "api", feature = "server-fn")))]
     let answer = use_memo(move || match factor1().checked_mul(factor2()) {
         Some(product) => format!("= {product}"),
         None => "overflow".to_string(),
@@ -34,6 +34,20 @@ fn Home() -> Element {
     #[cfg(feature = "api")]
     let answer = {
         let multiplication = use_resource(move || api::multiply(factor1(), factor2()));
+        let mut answer = use_signal(|| "= ?".to_string());
+        use_effect(move || {
+            answer.set(match &*multiplication.value().read() {
+                Some(Ok(product)) => format!("= {product}"),
+                Some(Err(err)) => err.to_string(),
+                None => "= ?".to_string(),
+            })
+        });
+        answer
+    };
+
+    #[cfg(feature = "server-fn")]
+    let answer = {
+        let multiplication = use_resource(move || server_function::multiply(factor1(), factor2()));
         let mut answer = use_signal(|| "= ?".to_string());
         use_effect(move || {
             answer.set(match &*multiplication.value().read() {
@@ -139,5 +153,19 @@ pub mod api {
             .map_err(std::io::Error::other)?;
 
         Ok(multiplication.product)
+    }
+}
+
+#[cfg(feature = "server-fn")]
+pub mod server_function {
+    use server_fn::ServerFnError;
+    use server_fn_macro_default::server;
+
+    #[server(endpoint = "/multiply")]
+    pub async fn multiply(factor1: i32, factor2: i32) -> Result<i32, ServerFnError> {
+        match factor1.checked_mul(factor2) {
+            Some(product) => Ok(product),
+            None => Err(ServerFnError::new("overflow")),
+        }
     }
 }

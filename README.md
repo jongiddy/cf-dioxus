@@ -5,10 +5,11 @@ All of the deployments assume that you have installed the [Dioxus CLI (`dx`)](ht
 This repo consists of the following directories:
 
 - `cf-dioxus`: A sample Dioxus project. See the site in action at https://cf-dioxus.pages.dev/
-- `cf-dioxus-pages`: Deployment of the Dioxus project on Cloudflare Pages (no SSR or API calls).
-- `cf-dioxus-worker`: Deployment of the Dioxus project on Cloudflare Workers (no SSR or API calls) - this corresponds to the Cloudflare Pages deployment.
-- `cf-dioxus-http-api`: Deployment of the Dioxus project on Cloudflare Workers using `http` to serve an API.
-- `cf-dioxus-axum-api`: Deployment of the Dioxus project on Cloudflare Workers using `axum` to serve an API.
+- `cf-dioxus-pages`: Deploy the Dioxus project on Cloudflare Pages (no SSR or API calls).
+- `cf-dioxus-worker`: Deploy the Dioxus project on Cloudflare Workers (no SSR or API calls) - this corresponds to the Cloudflare Pages deployment.
+- `cf-dioxus-http-api`: Deploy the Dioxus project on Cloudflare Workers using `http` to serve an API.
+- `cf-dioxus-axum-api`: Deploy the Dioxus project on Cloudflare Workers using `axum` to serve an API.
+- `cf-dioxus-server-fn`: Deploy the Dioxus project on Cloudflare Workers with server functions.
 
 The deployments here keep the Dioxus project separate from the Cloudflare
 deployment method. This allows easy application of alternative methods. To make

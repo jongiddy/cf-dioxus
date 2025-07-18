@@ -1,0 +1,21 @@
+[package]
+name = "cf-dioxus-server-fn"
+version = "0.1.0"
+edition = "2021"
+authors = ["Jonathan Giddy <jongiddy@gmail.com>"]
+
+[package.metadata.release]
+release = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+axum = { version = "0.8", default-features = false }
+cf-dioxus = { path = "../cf-dioxus", features = ["server-fn"] }
+console_error_panic_hook = { version = "0.1.7" }
+server_fn = { version = "0.8", features = ["axum-no-default"] }
+server_fn_macro_default = { version = "0.8", features = ["axum", "ssr"] }
+tower-service = "0.3.3"
+worker = { version = "0.6.0", features = ['http', 'axum'] }
+worker-macros = { version = "0.6.0", features = ['http'] }
