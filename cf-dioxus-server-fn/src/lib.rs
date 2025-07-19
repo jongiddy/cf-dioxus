@@ -36,11 +36,10 @@ static ROUTER: LazyLock<axum::Router> = LazyLock::new(|| {
     // Iterate through the registered server functions, adding each to the Axum router.
     for (path, method) in server_fn::axum::server_fn_paths() {
         console_log!("Adding {method} {path} to router");
-        let handler = move |req: http::Request<axum::body::Body>| async move {
-            server_fn::axum::handle_server_fn(req).await
-        };
         match routing::MethodFilter::try_from(method) {
             Ok(method_filter) => {
+                let handler =
+                    move |req| async move { server_fn::axum::handle_server_fn(req).await };
                 router = router.route(path, routing::on(method_filter, handler));
             }
             Err(err) => {
