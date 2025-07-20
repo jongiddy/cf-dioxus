@@ -26,7 +26,7 @@ static ROUTER: LazyLock<axum::Router> = LazyLock::new(|| {
                 .route("/multiply", get(multiply))
                 .fallback(async || http::StatusCode::NOT_FOUND),
         )
-        .fallback(fallback)
+        .fallback(static_asset_or_index_html)
 });
 
 async fn multiply(
@@ -38,8 +38,10 @@ async fn multiply(
     }
 }
 
-#[worker::send] // See https://github.com/cloudflare/workers-rs/issues/485
-async fn fallback(
+// Handlers that extract `Extension<Env>` require `#[worker::send]`.
+// See https://github.com/cloudflare/workers-rs/issues/485
+#[worker::send]
+async fn static_asset_or_index_html(
     uri: http::Uri,
     Extension(env): Extension<Env>,
 ) -> Result<http::Response<axum::body::Body>, (http::StatusCode, String)> {

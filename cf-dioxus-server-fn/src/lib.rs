@@ -38,27 +38,35 @@ static ROUTER: LazyLock<axum::Router> = LazyLock::new(|| {
         console_log!("Adding {method} {path} to router");
         match routing::MethodFilter::try_from(method) {
             Ok(method_filter) => {
-                let handler =
-                    move |req| async move { server_fn::axum::handle_server_fn(req).await };
-                router = router.route(path, routing::on(method_filter, handler));
+                router = router.route(
+                    path,
+                    routing::on(method_filter, move |req| {
+                        server_fn::axum::handle_server_fn(req)
+                    }),
+                );
             }
             Err(err) => {
                 console_error!("Unsupported server function HTTP method: {err:?}");
             }
         }
     }
-    router.fallback(fallback)
+    // After all server function routes are handled any other calls to `/api/*`
+    // return Not Found. All other routes return a static asset or `index.html`.
+    router
+        .nest(
+            "/api",
+            axum::Router::new().fallback(async || http::StatusCode::NOT_FOUND),
+        )
+        .fallback(static_asset_or_index_html)
 });
 
-#[worker::send] // See https://github.com/cloudflare/workers-rs/issues/485
-async fn fallback(
+// Handlers that extract `Extension<Env>` require `#[worker::send]`.
+// See https://github.com/cloudflare/workers-rs/issues/485
+#[worker::send]
+async fn static_asset_or_index_html(
     uri: http::Uri,
     Extension(env): Extension<Env>,
 ) -> Result<http::Response<axum::body::Body>, (http::StatusCode, String)> {
-    // For an API call return an error status rather than `index.html`.
-    if uri.path().starts_with("/api/") {
-        return Err((http::StatusCode::NOT_FOUND, "not found".to_string()));
-    }
     // Usually static resources will be returned without invoking the
     // worker. However, non-browser requests may invoke the worker.
     // This performs the `single-page-application` behavior of returning

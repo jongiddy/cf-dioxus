@@ -1,7 +1,5 @@
 # Hosting Dioxus on Cloudflare Workers
 
-All of the deployments assume that you have installed the [Dioxus CLI (`dx`)](https://dioxuslabs.com/learn/0.6/getting_started/) and the [Cloudflare Wrangler command (`npx wrangler`)](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
-
 This repo consists of the following directories:
 
 - `cf-dioxus`: A sample Dioxus project. See the site in action at https://cf-dioxus.pages.dev/
@@ -11,7 +9,12 @@ This repo consists of the following directories:
 - `cf-dioxus-axum-api`: Deploy the Dioxus project on Cloudflare Workers using `axum` to serve an API.
 - `cf-dioxus-server-fn`: Deploy the Dioxus project on Cloudflare Workers with server functions.
 
-The deployments here keep the Dioxus project separate from the Cloudflare
+The deployments are tested with Dioxus v0.6.
+
+The deployments assume that you have installed the [Dioxus CLI (`dx`)](https://dioxuslabs.com/learn/0.6/getting_started/)
+and the [Cloudflare Wrangler command (`npx wrangler`)](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
+
+The deployments keep the Dioxus project separate from the Cloudflare
 deployment method. This allows easy application of alternative methods. To make
 this work more cleanly, most of the Dioxus code is moved into a `lib.rs` file,
 with just the `main` function remaining in the `main.rs` file. This allows the
