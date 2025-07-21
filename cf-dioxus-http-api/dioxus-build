@@ -16,3 +16,10 @@ cat > target/dx/cf-dioxus/release/web/public/robots.txt <<EOF
 User-agent: *
 Disallow: /
 EOF
+
+# Files in the assets directory include a content-based hash in the name.
+# Allow caches to provide these files for up to 6 months without revalidating.
+cat > target/dx/cf-dioxus/release/web/public/_headers <<EOF
+/assets/*
+    Cache-Control: public, max-age=15552000
+EOF
