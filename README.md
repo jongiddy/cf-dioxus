@@ -7,7 +7,7 @@ This repo consists of the following directories:
 - `cf-dioxus-worker`: Deploy the Dioxus project on Cloudflare Workers (no SSR or API calls) - this corresponds to the Cloudflare Pages deployment.
 - `cf-dioxus-http-api`: Deploy the Dioxus project on Cloudflare Workers using `http` to serve an API.
 - `cf-dioxus-axum-api`: Deploy the Dioxus project on Cloudflare Workers using `axum` to serve an API.
-- `cf-dioxus-server-fn`: Deploy the Dioxus project on Cloudflare Workers with server functions.
+- `cf-dioxus-server-fn`: Deploy the Dioxus project on Cloudflare Workers with [server functions](https://dioxuslabs.com/learn/0.6/guides/fullstack/server_functions/).
 
 The deployments are tested with Dioxus v0.6.
 
@@ -25,8 +25,9 @@ individual file size limit of 25 MiB. The `debug` builds of Dioxus projects
 quickly exceed this limit.
 
 On a Cloudflare Free plan all these deployments will be free of any costs. A
-free site will have a [limit on the number of Worker requests served per day](https://developers.cloudflare.com/workers/platform/pricing/#workers). Worker requests include [Dioxus server functions](https://dioxuslabs.com/learn/0.6/guides/fullstack/server_functions/).
-Static assets, including the Dioxus bundle assets, are free and unlimited on any plan.
+free site will have a [limit on the number of Worker requests served per day](https://developers.cloudflare.com/workers/platform/pricing/#workers).
+Worker requests include API calls and Dioxus server functions. Static assets,
+including the Dioxus bundle assets, are free and unlimited on any plan.
 
 For a more professional site, you may want to purchase a custom domain and
 consider a paid plan to avoid the request limit.

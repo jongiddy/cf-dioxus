@@ -50,7 +50,7 @@ async fn fetch(
         }
 
         path if path.starts_with("/api/") => {
-            return Ok(http::Response::builder()
+            Ok(http::Response::builder()
                 .status(http::StatusCode::NOT_FOUND)
                 .body(worker::Body::empty())?)
         }

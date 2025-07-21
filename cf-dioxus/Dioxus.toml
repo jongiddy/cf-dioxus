@@ -1,5 +1,9 @@
 [application]
 
+[web]
+# Workers does not use the pre-compressed files
+pre_compress = false
+
 [web.app]
 
 # HTML title tag content
