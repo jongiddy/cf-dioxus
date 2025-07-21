@@ -22,5 +22,5 @@ EOF
 # See https://developers.cloudflare.com/workers/static-assets/headers/
 cat > target/dx/cf-dioxus/release/web/public/_headers <<EOF
 /assets/*
-    Cache-Control: public, max-age=15552000
+    Cache-Control: public, max-age=15552000, immutable
 EOF
