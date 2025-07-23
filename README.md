@@ -9,7 +9,7 @@ This repo consists of the following directories:
 - `cf-dioxus-axum-api`: Deploy the Dioxus project on Cloudflare Workers using `axum` to serve an API.
 - `cf-dioxus-server-fn`: Deploy the Dioxus project on Cloudflare Workers with [server functions](https://dioxuslabs.com/learn/0.6/guides/fullstack/server_functions/).
 
-The deployments are tested with Dioxus v0.6.
+The deployments are tested with Dioxus v0.6.3. For the up-coming Dioxus v0.7 release change to the `main` branch.
 
 The deployments assume that you have installed the [Dioxus CLI (`dx`)](https://dioxuslabs.com/learn/0.6/getting_started/)
 and the [Cloudflare Wrangler command (`npx wrangler`)](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
