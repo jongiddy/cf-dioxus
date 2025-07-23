@@ -24,6 +24,7 @@ pub fn App() -> Element {
 fn Home() -> Element {
     let mut factor1 = use_signal(|| 1i32);
     let mut factor2 = use_signal(|| 1i32);
+    #[allow(unused_mut)]
     let mut opacity = use_signal(|| 1.0);
 
     #[cfg(not(any(feature = "api", feature = "server-fn")))]
