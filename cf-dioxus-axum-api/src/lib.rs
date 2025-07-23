@@ -29,6 +29,7 @@ static ROUTER: LazyLock<axum::Router> = LazyLock::new(|| {
         .fallback(static_asset_or_index_html)
 });
 
+#[worker::send]
 async fn multiply(
     request: Query<MultiplyRequest>,
 ) -> Result<Json<MultiplyResponse>, http::StatusCode> {

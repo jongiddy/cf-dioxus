@@ -24,6 +24,8 @@ pub fn App() -> Element {
 fn Home() -> Element {
     let mut factor1 = use_signal(|| 1i32);
     let mut factor2 = use_signal(|| 1i32);
+    #[allow(unused_mut)]
+    let mut opacity = use_signal(|| 1.0);
 
     #[cfg(not(any(feature = "api", feature = "server-fn")))]
     let answer = use_memo(move || match factor1().checked_mul(factor2()) {
@@ -33,28 +35,42 @@ fn Home() -> Element {
 
     #[cfg(feature = "api")]
     let answer = {
-        let multiplication = use_resource(move || api::multiply(factor1(), factor2()));
+        // In Dioxus 0.6 the resource state does not change after the first call.
+        // To change state *during* a call, add it to the async call (as for
+        // `opacity` here). In Dioxus 0.7 the resource state changes during each call:
+        // https://github.com/jongiddy/cf-dioxus/blob/d1b8f6d/cf-dioxus/src/lib.rs#L46-L51
+        let multiplication = use_resource(move || async move {
+            opacity.set(0.5);
+            let multiplication = api::multiply(factor1(), factor2()).await;
+            opacity.set(1.0);
+            multiplication
+        });
         let mut answer = use_signal(|| "= ?".to_string());
         use_effect(move || {
-            answer.set(match &*multiplication.value().read() {
+            answer.set(match &*multiplication.read() {
                 Some(Ok(product)) => format!("= {product}"),
                 Some(Err(err)) => err.to_string(),
                 None => "= ?".to_string(),
-            })
+            });
         });
         answer
     };
 
     #[cfg(feature = "server-fn")]
     let answer = {
-        let multiplication = use_resource(move || server_function::multiply(factor1(), factor2()));
+        let multiplication = use_resource(move || async move {
+            opacity.set(0.5);
+            let multiplication = server_function::multiply(factor1(), factor2()).await;
+            opacity.set(1.0);
+            multiplication
+        });
         let mut answer = use_signal(|| "= ?".to_string());
         use_effect(move || {
-            answer.set(match &*multiplication.value().read() {
+            answer.set(match &*multiplication.read() {
                 Some(Ok(product)) => format!("= {product}"),
                 Some(Err(err)) => err.to_string(),
                 None => "= ?".to_string(),
-            })
+            });
         });
         answer
     };
@@ -97,6 +113,7 @@ fn Home() -> Element {
                     "{factor2}"
                 }
                 div {
+                    opacity: "{opacity}",
                     "{answer}"
                 }
 
