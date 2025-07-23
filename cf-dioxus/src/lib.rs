@@ -24,6 +24,7 @@ pub fn App() -> Element {
 fn Home() -> Element {
     let mut factor1 = use_signal(|| 1i32);
     let mut factor2 = use_signal(|| 1i32);
+    let mut opacity = use_signal(|| 1.0);
 
     #[cfg(not(any(feature = "api", feature = "server-fn")))]
     let answer = use_memo(move || match factor1().checked_mul(factor2()) {
@@ -36,11 +37,17 @@ fn Home() -> Element {
         let multiplication = use_resource(move || api::multiply(factor1(), factor2()));
         let mut answer = use_signal(|| "= ?".to_string());
         use_effect(move || {
-            answer.set(match &*multiplication.value().read() {
+            answer.set(match &*multiplication.read() {
                 Some(Ok(product)) => format!("= {product}"),
                 Some(Err(err)) => err.to_string(),
                 None => "= ?".to_string(),
-            })
+            });
+        });
+        use_effect(move || {
+            opacity.set(match &*multiplication.state().read() {
+                UseResourceState::Ready => 1.0,
+                _ => 0.5
+            });
         });
         answer
     };
@@ -50,11 +57,17 @@ fn Home() -> Element {
         let multiplication = use_resource(move || server_function::multiply(factor1(), factor2()));
         let mut answer = use_signal(|| "= ?".to_string());
         use_effect(move || {
-            answer.set(match &*multiplication.value().read() {
+            answer.set(match &*multiplication.read() {
                 Some(Ok(product)) => format!("= {product}"),
                 Some(Err(err)) => err.to_string(),
                 None => "= ?".to_string(),
-            })
+            });
+        });
+        use_effect(move || {
+            opacity.set(match &*multiplication.state().read() {
+                UseResourceState::Ready => 1.0,
+                _ => 0.5
+            });
         });
         answer
     };
@@ -97,6 +110,7 @@ fn Home() -> Element {
                     "{factor2}"
                 }
                 div {
+                    opacity: "{opacity}",
                     "{answer}"
                 }
 
