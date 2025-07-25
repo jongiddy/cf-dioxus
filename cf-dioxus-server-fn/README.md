@@ -31,7 +31,7 @@ cf-dioxus = { path = "../cf-dioxus", features = ["server-fn"] }
 
 - add the `server-fn` feature when building the cf-dioxus client:
 ```sh
-dx bundle --release --platform web --features server-fn
+./dioxus-build --features server-fn
 ```
 
 - add code to `src/lib.rs` to handle the server function calls.

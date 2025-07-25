@@ -14,9 +14,9 @@ $ cargo generate cloudflare/workers-rs
 Then the following steps were performed:
 
 Update the `wrangler.toml` file to build the Dioxus bundle before deploying the
-worker by adding `./dioxus-build &&` to the build command. The `dioxus-build`
-script adds some files to the root path to prevent the Worker being activated
-unnecessarily.
+worker by adding `( cd ../cf-dioxus && ./dioxus-build ) &&` to the build command.
+The `dioxus-build` script adds some files to the root path to prevent the Worker
+being activated unnecessarily.
 
 Add an `assets` table to the `wrangler.toml` file:
 ```toml

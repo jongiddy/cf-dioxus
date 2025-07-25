@@ -2,9 +2,7 @@
 
 set -e -x
 
-cd ../cf-dioxus
-
-dx bundle --release --platform web --features api
+dx bundle --release --platform web "$@"
 
 # Firefox attempts to prefetch the favicon from /favicon.ico - add the icon to
 # the top-level so it does not activate a Worker instance.

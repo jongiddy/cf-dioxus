@@ -29,7 +29,7 @@ This only needs to be done once. The production branch name is not important bec
 
 In the Dioxus project directory (`cf-dioxus`) run
 ```sh
-$ dx bundle --platform web --release --target wasm32-unknown-unknown
+$ ./dioxus-build
 ```
 
 The last line shows the path for the assets:

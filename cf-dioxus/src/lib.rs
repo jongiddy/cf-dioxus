@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 use dioxus::prelude::*;
 
 #[derive(Debug, Clone, Routable, PartialEq)]
