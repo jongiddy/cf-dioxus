@@ -21,7 +21,7 @@ axum = { version = "0.8", default-features = false, features = ["query", "json"]
 
 - add the `api` feature when building the cf-dioxus client:
 ```sh
-dx bundle --release --platform web --features api
+./dioxus-build --features api
 ```
 
 - add code to `src/lib.rs` to handle the API calls. Once the `http` crate is available, it is

@@ -3,7 +3,7 @@ main = "build/worker/shim.mjs"
 compatibility_date = "2025-07-07"
 
 [build]
-command = "./dioxus-build && cargo install -q worker-build && worker-build --release"
+command = "( cd ../cf-dioxus && ./dioxus-build ) && cargo install -q worker-build && worker-build --release"
 
 [assets]
 directory = "../cf-dioxus/target/dx/cf-dioxus/release/web/public"
