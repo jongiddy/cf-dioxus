@@ -13,6 +13,8 @@ The deployments are tested with Dioxus v0.6.3. For the up-coming Dioxus v0.7 rel
 
 The deployments assume that you have installed the [Dioxus CLI (`dx`)](https://dioxuslabs.com/learn/0.6/getting_started/)
 and the [Cloudflare Wrangler command (`npx wrangler`)](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
+There is a `package-lock.json` file in the top-level directory containing the versions of Wrangler
+and its dependencies with which these deployments are tested. The command `npm ci` will install the same versions.
 
 The deployments keep the Dioxus project separate from the Cloudflare
 deployment method. This allows easy application of alternative methods. To make
