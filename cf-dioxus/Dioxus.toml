@@ -1,7 +1,7 @@
 [application]
 
 [web]
-# Workers does not use the pre-compressed files
+# Cloudflare Workers do not use the pre-compressed files
 pre_compress = false
 
 [web.app]

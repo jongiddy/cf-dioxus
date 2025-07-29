@@ -11,28 +11,30 @@ $ cargo generate cloudflare/workers-rs
   Project Name: cf-dioxus-worker
 ```
 
-Then the following steps were performed:
+## Changes
 
-Update the `wrangler.toml` file to build the Dioxus bundle before deploying the
-worker by adding `( cd ../cf-dioxus && ./dioxus-build ) &&` to the build command.
-The `dioxus-build` script adds some files to the root path to prevent the Worker
-being activated unnecessarily.
+Add the Dioxus project directory as a dependency in the worker `Cargo.toml`.
 
-Add an `assets` table to the `wrangler.toml` file:
-```toml
-[assets]
-directory = "../cf-dioxus/target/dx/cf-dioxus/release/web/public"
-binding = "ASSETS"
-not_found_handling = "single-page-application"
-```
-
-Add your Dioxus project directory as dependencies in the worker `Cargo.toml`:
 ```toml
 cf-dioxus = { path = "../cf-dioxus" }
 ```
 
-Change `src/lib.rs` to return static assets if the Worker is invoked. For most
-browser requests the static assets will be served without Worker invocation.
+Update the `wrangler.toml` file to build the Dioxus client before deploying the
+worker. In the `assets` table add the path to the client bundle and enable
+Single Page Application mode. Enable logs.
+
+```toml
+[build]
+command = "( cd ../cf-dioxus && ./dioxus-build ) && cargo install -q worker-build && worker-build --release"
+
+[assets]
+directory = "../cf-dioxus/target/dx/cf-dioxus/release/web/public"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+[observability.logs]
+enabled = true
+```
 
 ## Deploy a local dev site
 

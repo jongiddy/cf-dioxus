@@ -7,32 +7,40 @@ $ cargo generate cloudflare/workers-rs
   Project Name: cf-dioxus-http-api
 ```
 
-Changes to the `cf-dioxus-worker` configuration:
+## Changes
 
-- add the `api` feature to the cf-dioxus dependency to provide access to the types used for the API:
+Add the Dioxus project directory as a dependency in the worker `Cargo.toml`.
+Enable the API by adding the `api` feature.
+
 ```toml
 cf-dioxus = { path = "../cf-dioxus", features = ["api"] }
 ```
 
-- add some additional crates for the API implementation:
+Add dependencies for the API implementation:
 ```toml
 futures = "0.3"
-http = "1.3"
 serde_json = "1"
 serde_urlencoded = "0.7"
 ```
 
-- add the `api` feature when building the cf-dioxus client:
-```sh
-./dioxus-build --features api
+Update the `wrangler.toml` file to build the Dioxus client before deploying the
+worker. Enable the `api` feature when building the Dioxus client. In the `assets`
+table add the path to the client bundle and enable Single Page Application mode
+with an exception for the API paths. Enable logs.
+
+```toml
+[build]
+command = "( cd ../cf-dioxus && ./dioxus-build --features api ) && cargo install -q worker-build && worker-build --release"
+
+[assets]
+directory = "../cf-dioxus/target/dx/cf-dioxus/release/web/public"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = [ "/api/*" ]
+
+[observability.logs]
+enabled = true
 ```
-
-- add code to `src/lib.rs` to handle the API calls. Once the `http` crate is available, it is
-generally easier to expand the type aliases `worker::HttpRequest` to `http::Request<worker::Body>`
-and `worker::HttpResponse` to `http::Response<worker::Body>`.
-
-- add `run_worker_first = [ "/api/*" ]` to `wrangler.toml` to ensure that API calls go to the worker
-rather than returning the index page.
 
 ## Deploy a local dev site
 
