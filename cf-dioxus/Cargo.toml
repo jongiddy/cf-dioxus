@@ -4,8 +4,6 @@ version = "0.1.0"
 authors = ["Jonathan Giddy <jongiddy@gmail.com>"]
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 dioxus = { git = "https://github.com/DioxusLabs/dioxus.git", features = ["router"] }
 
@@ -26,15 +24,3 @@ desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
 api = ["dep:reqwest", "dep:serde", "dep:serde_urlencoded", "dep:web-sys"]
 server-fn = ["dep:server_fn", "dep:server_fn_macro_default"]
-
-[profile]
-
-[profile.wasm-dev]
-inherits = "dev"
-opt-level = 1
-
-[profile.server-dev]
-inherits = "dev"
-
-[profile.android-dev]
-inherits = "dev"

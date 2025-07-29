@@ -14,7 +14,7 @@ dx bundle --release --platform web "$@"
 # Redirects are specified using the `_redirects` file. See
 # https://developers.cloudflare.com/workers/static-assets/redirects/
 
-# Firefox attempts to prefetch the website icon from `/favicon.ico` - redirect
+# Browsers attempt to prefetch the website icon from `/favicon.ico` - redirect
 # this path to the favicon file stored in the `assets` directory.
 
 # Find the hashed name of the icon:
