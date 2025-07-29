@@ -16,6 +16,8 @@ $ cargo generate cloudflare/workers-rs
   Project Name: cf-dioxus-server-fn
 ```
 
+## Changes
+
 Add the Dioxus project directory as a dependency in the worker `Cargo.toml`.
 Enable the API by adding the `server-fn` feature.
 
