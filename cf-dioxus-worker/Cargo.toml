@@ -11,7 +11,7 @@ release = false
 crate-type = ["cdylib"]
 
 [dependencies]
-cf-dioxus = { path = "../cf-dioxus" }
+cf-dioxus = { path = "../cf-dioxus", default-features = false }
 console_error_panic_hook = { version = "0.1.7" }
 http = "1.3"
 worker = { version = "0.6.0", features = ['http'] }

@@ -12,7 +12,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 axum = { version = "0.8", default-features = false }
-cf-dioxus = { path = "../cf-dioxus", features = ["server-fn"] }
+cf-dioxus = { path = "../cf-dioxus", default-features = false, features = ["server-fn"] }
 console_error_panic_hook = { version = "0.1.7" }
 server_fn = { version = "0.8", features = ["axum-no-default"] }
 server_fn_macro_default = { version = "0.8", features = ["axum", "ssr"] }

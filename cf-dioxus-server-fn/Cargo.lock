@@ -536,7 +536,6 @@ dependencies = [
  "serde",
  "server_fn 0.6.15",
  "tracing",
- "web-sys",
 ]
 
 [[package]]
