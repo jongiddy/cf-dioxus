@@ -5,7 +5,7 @@ authors = ["Jonathan Giddy <jongiddy@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-dioxus = { git = "https://github.com/DioxusLabs/dioxus.git", features = ["router"] }
+dioxus = { path = "../../dioxus/packages/dioxus", features = ["router"] }
 
 # Dependencies for `api` feature
 reqwest = { version = "0.12", features = ["json"], optional = true }
@@ -24,3 +24,15 @@ desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
 api = ["dep:reqwest", "dep:serde", "dep:serde_urlencoded", "dep:web-sys"]
 server-fn = ["dep:server_fn", "dep:server_fn_macro_default"]
+
+[profile]
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"
