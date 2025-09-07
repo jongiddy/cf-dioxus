@@ -5,7 +5,7 @@ authors = ["Jonathan Giddy <jongiddy@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-dioxus = { git = "https://github.com/DioxusLabs/dioxus.git", features = ["router"] }
+dioxus = { git = "https://github.com/DioxusLabs/dioxus.git", tag = "v0.7.0-rc.0", features = ["router"] }
 
 # Dependencies for `api` feature
 reqwest = { version = "0.12", features = ["json"], optional = true }

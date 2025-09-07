@@ -11,9 +11,9 @@ This repo consists of the following directories:
 
 Each directory contains instructions on deploying locally for testing and deploying to Cloudflare.
 
-These deployments use the Dioxus `main` branch that will become Dioxus v0.7. For Dioxus v0.6 change to the `dioxus-0.6` branch in this repo.
+These deployments use the Dioxus `v0.7.0-rc.0` tag. For other releases, check for a branch in this repo with the required Dioxus version.
 
-The deployments assume that you have installed the development build of [Dioxus CLI (`dx`)](https://github.com/DioxusLabs/dioxus/tree/main/packages/cli#install-the-latest-development-build-through-git)
+The deployments assume that you have installed the development build of [Dioxus CLI (`dx`)](`cargo install --git https://github.com/DioxusLabs/dioxus --tag v0.7.0-rc.0 dioxus-cli`)
 and the [Cloudflare Wrangler command (`npx wrangler`)](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
 There is a `package-lock.json` file in the top-level directory containing the versions of Wrangler
 and its dependencies with which these deployments are tested. The command `npm ci` will install the same versions.
