@@ -12,7 +12,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 axum = { version = "0.8", default-features = false, features = ["json", "query"]}
-cf-dioxus = { path = "../cf-dioxus", features = ["api"] }
+cf-dioxus = { path = "../cf-dioxus", default-features = false, features = ["api"] }
 console_error_panic_hook = { version = "0.1.7" }
 tower-service = "0.3.3"
 worker = { version = "0.6", features = ['http', 'axum'] }

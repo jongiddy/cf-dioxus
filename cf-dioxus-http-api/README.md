@@ -13,7 +13,7 @@ Add the Dioxus project directory as a dependency in the worker `Cargo.toml`.
 Enable the API by adding the `api` feature.
 
 ```toml
-cf-dioxus = { path = "../cf-dioxus", features = ["api"] }
+cf-dioxus = { path = "../cf-dioxus", default-features = false, features = ["api"] }
 ```
 
 Add dependencies for the API implementation:

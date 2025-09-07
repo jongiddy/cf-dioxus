@@ -22,7 +22,7 @@ Add the Dioxus project directory as a dependency in the worker `Cargo.toml`.
 Enable the API by adding the `server-fn` feature.
 
 ```toml
-cf-dioxus = { path = "../cf-dioxus", features = ["server-fn"] }
+cf-dioxus = { path = "../cf-dioxus", default-features = false, features = ["server-fn"] }
 ```
 
 Add the `server-fn` dependencies:

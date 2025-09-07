@@ -16,7 +16,7 @@ $ cargo generate cloudflare/workers-rs
 Add the Dioxus project directory as a dependency in the worker `Cargo.toml`.
 
 ```toml
-cf-dioxus = { path = "../cf-dioxus" }
+cf-dioxus = { path = "../cf-dioxus", default-features = false }
 ```
 
 Update the `wrangler.toml` file to build the Dioxus client before deploying the
