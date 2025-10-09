@@ -2,7 +2,7 @@
 
 set -e -x
 
-dx bundle --release --platform web "$@"
+dx bundle --release --web "$@"
 
 # Cloudflare Pages and Cloudflare Workers allow configuration of redirects and
 # additional headers for static assets. These are created using special files in
