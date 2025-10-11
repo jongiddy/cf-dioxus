@@ -37,7 +37,7 @@ fn Home() -> Element {
     });
 
     // With the `api` feature enabled, call the `api::multiply` function that performs
-    // a `reqwest` call to the Cloudflare Worker when the factors change.
+    // a `reqwest` call to the Cloudflare Worker.
     #[cfg(feature = "api")]
     let answer = {
         // In Dioxus 0.6 the resource state does not change after the first call.
@@ -50,19 +50,19 @@ fn Home() -> Element {
             api_call
         });
         let mut answer = use_signal(|| "= ?".to_string());
-        // Transform the API `Result<i32>` to a `String`
+        // Transform the API `Result<i32, String>` to a `String`
         use_effect(move || {
             answer.set(match &*api_call.read() {
                 Some(Ok(product)) => format!("= {product}"),
-                Some(Err(err)) => err.to_string(),
+                Some(Err(string_err)) => string_err.clone(),
                 None => "= ?".to_string(),
             });
         });
         answer
     };
 
-    // With the `server-fn` feature enabled, call the `server_function::multiply` function
-    // that runs the function code on the Cloudflare Worker when the factors change.
+    // With the `server-fn` feature enabled, call the `server_function::multiply`
+    // function that runs the function code on the Cloudflare Worker.
     #[cfg(feature = "server-fn")]
     let answer = {
         let api_call = use_resource(move || async move {
@@ -72,11 +72,11 @@ fn Home() -> Element {
             api_call
         });
         let mut answer = use_signal(|| "= ?".to_string());
-        // Transform the server function `Result<i32>` to a `String`
+        // Transform the server function `Result<i32, ServerFnError>` to a `String`
         use_effect(move || {
             answer.set(match &*api_call.read() {
                 Some(Ok(product)) => format!("= {product}"),
-                Some(Err(err)) => err.to_string(),
+                Some(Err(server_fn_err)) => server_fn_err.to_string(),
                 None => "= ?".to_string(),
             });
         });
@@ -159,23 +159,27 @@ pub mod api {
         pub product: i32,
     }
 
-    pub async fn multiply(factor1: i32, factor2: i32) -> Result<i32, std::io::Error> {
-        let location = ::web_sys::window().unwrap().location().origin().unwrap();
-        let mut url = reqwest::Url::parse(&location).map_err(std::io::Error::other)?;
+    pub async fn multiply(factor1: i32, factor2: i32) -> Result<i32, String> {
+        let location = ::web_sys::window()
+            .ok_or_else(|| "`window` does not exist".to_string())?
+            .location()
+            .origin()
+            .map_err(|value| format!("{value:?}"))?;
+        let mut url = reqwest::Url::parse(&location).map_err(|err| err.to_string())?;
         url.set_path("api/multiply");
         let query = serde_urlencoded::to_string(MultiplyRequest { factor1, factor2 })
-            .map_err(std::io::Error::other)?;
+            .map_err(|err| err.to_string())?;
         url.set_query(Some(&query));
-        let response = reqwest::get(url).await.map_err(std::io::Error::other)?;
+        let response = reqwest::get(url).await.map_err(|err| err.to_string())?;
 
         if !response.status().is_success() {
-            return Err(std::io::Error::other(response.status().to_string()));
+            return Err(response.status().to_string());
         }
 
         let multiplication = response
             .json::<MultiplyResponse>()
             .await
-            .map_err(std::io::Error::other)?;
+            .map_err(|err| err.to_string())?;
 
         Ok(multiplication.product)
     }
