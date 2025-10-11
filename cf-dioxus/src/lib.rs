@@ -29,25 +29,30 @@ fn Home() -> Element {
     #[allow(unused_mut)]
     let mut opacity = use_signal(|| 1.0);
 
+    // With no features enabled, recalculate the product locally when the factors change.
     #[cfg(not(any(feature = "api", feature = "server-fn")))]
     let answer = use_memo(move || match factor1().checked_mul(factor2()) {
         Some(product) => format!("= {product}"),
         None => "overflow".to_string(),
     });
 
+    // With the `api` feature enabled, call the `api::multiply` function that performs
+    // a `reqwest` call to the Cloudflare Worker when the factors change.
     #[cfg(feature = "api")]
     let answer = {
-        let multiplication = use_resource(move || api::multiply(factor1(), factor2()));
+        let api_call = use_resource(move || api::multiply(factor1(), factor2()));
         let mut answer = use_signal(|| "= ?".to_string());
+        // Transform the API `Result<i32>` to a `String`
         use_effect(move || {
-            answer.set(match &*multiplication.read() {
+            answer.set(match &*api_call.read() {
                 Some(Ok(product)) => format!("= {product}"),
                 Some(Err(err)) => err.to_string(),
                 None => "= ?".to_string(),
             });
         });
+        // While the API call is in progress, dim the previous answer.
         use_effect(move || {
-            opacity.set(match &*multiplication.state().read() {
+            opacity.set(match &*api_call.state().read() {
                 UseResourceState::Ready => 1.0,
                 _ => 0.5
             });
@@ -55,19 +60,23 @@ fn Home() -> Element {
         answer
     };
 
+    // With the `server-fn` feature enabled, call the `server_function::multiply` function
+    // that runs the function code on the Cloudflare Worker when the factors change.
     #[cfg(feature = "server-fn")]
     let answer = {
-        let multiplication = use_resource(move || server_function::multiply(factor1(), factor2()));
+        let api_call = use_resource(move || server_function::multiply(factor1(), factor2()));
         let mut answer = use_signal(|| "= ?".to_string());
+        // Transform the server function `Result<i32>` to a `String`
         use_effect(move || {
-            answer.set(match &*multiplication.read() {
+            answer.set(match &*api_call.read() {
                 Some(Ok(product)) => format!("= {product}"),
                 Some(Err(err)) => err.to_string(),
                 None => "= ?".to_string(),
             });
         });
+        // While the server function is in progress, dim the previous answer.
         use_effect(move || {
-            opacity.set(match &*multiplication.state().read() {
+            opacity.set(match &*api_call.state().read() {
                 UseResourceState::Ready => 1.0,
                 _ => 0.5
             });
