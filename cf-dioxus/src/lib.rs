@@ -29,27 +29,30 @@ fn Home() -> Element {
     #[allow(unused_mut)]
     let mut opacity = use_signal(|| 1.0);
 
+    // With no features enabled, recalculate the product locally when the factors change.
     #[cfg(not(any(feature = "api", feature = "server-fn")))]
     let answer = use_memo(move || match factor1().checked_mul(factor2()) {
         Some(product) => format!("= {product}"),
         None => "overflow".to_string(),
     });
 
+    // With the `api` feature enabled, call the `api::multiply` function that performs
+    // a `reqwest` call to the Cloudflare Worker when the factors change.
     #[cfg(feature = "api")]
     let answer = {
         // In Dioxus 0.6 the resource state does not change after the first call.
         // To change state *during* a call, add it to the async call (as for
-        // `opacity` here). In Dioxus 0.7 the resource state changes during each call:
-        // https://github.com/jongiddy/cf-dioxus/blob/d1b8f6d/cf-dioxus/src/lib.rs#L46-L51
-        let multiplication = use_resource(move || async move {
+        // `opacity` here). In Dioxus 0.7 the resource state changes during each call.
+        let api_call = use_resource(move || async move {
             opacity.set(0.5);
-            let multiplication = api::multiply(factor1(), factor2()).await;
+            let api_call = api::multiply(factor1(), factor2()).await;
             opacity.set(1.0);
-            multiplication
+            api_call
         });
         let mut answer = use_signal(|| "= ?".to_string());
+        // Transform the API `Result<i32>` to a `String`
         use_effect(move || {
-            answer.set(match &*multiplication.read() {
+            answer.set(match &*api_call.read() {
                 Some(Ok(product)) => format!("= {product}"),
                 Some(Err(err)) => err.to_string(),
                 None => "= ?".to_string(),
@@ -58,17 +61,20 @@ fn Home() -> Element {
         answer
     };
 
+    // With the `server-fn` feature enabled, call the `server_function::multiply` function
+    // that runs the function code on the Cloudflare Worker when the factors change.
     #[cfg(feature = "server-fn")]
     let answer = {
-        let multiplication = use_resource(move || async move {
+        let api_call = use_resource(move || async move {
             opacity.set(0.5);
-            let multiplication = server_function::multiply(factor1(), factor2()).await;
+            let api_call = server_function::multiply(factor1(), factor2()).await;
             opacity.set(1.0);
-            multiplication
+            api_call
         });
         let mut answer = use_signal(|| "= ?".to_string());
+        // Transform the server function `Result<i32>` to a `String`
         use_effect(move || {
-            answer.set(match &*multiplication.read() {
+            answer.set(match &*api_call.read() {
                 Some(Ok(product)) => format!("= {product}"),
                 Some(Err(err)) => err.to_string(),
                 None => "= ?".to_string(),
