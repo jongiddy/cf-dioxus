@@ -28,7 +28,7 @@ with an exception for the API paths. Enable logs.
 
 ```toml
 [build]
-command = "( cd ../cf-dioxus && ./dioxus-build --features api ) && cargo install -q worker-build && worker-build --release"
+command = "( cd ../cf-dioxus && dx bundle --release --web --features api ) && cargo install -q worker-build && worker-build --release"
 
 [assets]
 directory = "../cf-dioxus/target/dx/cf-dioxus/release/web/public"

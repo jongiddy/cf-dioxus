@@ -25,7 +25,7 @@ Single Page Application mode. Enable logs.
 
 ```toml
 [build]
-command = "( cd ../cf-dioxus && ./dioxus-build ) && cargo install -q worker-build && worker-build --release"
+command = "( cd ../cf-dioxus && dx bundle --release --web ) && cargo install -q worker-build && worker-build --release"
 
 [assets]
 directory = "../cf-dioxus/target/dx/cf-dioxus/release/web/public"

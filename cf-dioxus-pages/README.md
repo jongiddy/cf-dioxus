@@ -29,7 +29,7 @@ This only needs to be done once. The production branch name is not important bec
 
 In the Dioxus project directory (`cf-dioxus`) run
 ```sh
-$ ./dioxus-build
+$ dx bundle --release --web
 ```
 
 The last line shows the path for the assets:

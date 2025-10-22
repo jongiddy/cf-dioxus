@@ -1,4 +1,5 @@
 [application]
+public_dir = "public"
 
 [web]
 # Cloudflare Workers do not use the pre-compressed files
