@@ -13,9 +13,8 @@ pre_compress = false
 ```
 
 Files in the `public_dir` directory will be copied into the site directory, next
-to `index.html`.
-
-This can be used, for example, to add a `robots.txt` file.
+to `index.html`. This can be used, for example, to add a `/favicon.ico` or
+`/robots.txt` path.
 
 Cloudflare Pages and Cloudflare Workers use special files in the top-level
 static asset directory to allow configuration of additional headers and
