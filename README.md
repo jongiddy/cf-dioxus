@@ -3,17 +3,18 @@
 This repo consists of the following directories:
 
 - `cf-dioxus`: A sample Dioxus project. See the site in action at https://cf-dioxus.pages.dev/
-- `cf-dioxus-pages`: Deploy the Dioxus project on Cloudflare Pages (no SSR or API calls).
-- `cf-dioxus-worker`: Deploy the Dioxus project on Cloudflare Workers (no SSR or API calls) - this corresponds to the Cloudflare Pages deployment.
+- `cf-dioxus-pages`: Deploy the Dioxus project on Cloudflare Pages (no API calls).
+- `cf-dioxus-worker`: Deploy the Dioxus project on Cloudflare Workers (no API calls) - this corresponds to the Cloudflare Pages deployment.
 - `cf-dioxus-http-api`: Deploy the Dioxus project on Cloudflare Workers using `http` to serve an API.
 - `cf-dioxus-axum-api`: Deploy the Dioxus project on Cloudflare Workers using `axum` to serve an API.
 - `cf-dioxus-server-fn`: Deploy the Dioxus project on Cloudflare Workers with [server functions](https://dioxuslabs.com/learn/0.6/guides/fullstack/server_functions/).
 
 Each directory contains instructions on deploying locally for testing and deploying to Cloudflare.
 
-These deployments use the Dioxus `v0.7.0-rc.3` tag. For other releases, check for a branch in this repo with the required Dioxus version.
+The deployments are tested with Dioxus v0.7.0. For other releases, check for a branch in this repo with
+the required Dioxus version.
 
-The deployments assume that you have installed the development build of [Dioxus CLI (`dx`)](`cargo install --git https://github.com/DioxusLabs/dioxus --tag v0.7.0-rc.3 dioxus-cli`)
+The deployments assume that you have installed the [Dioxus CLI (`dx`)](https://dioxuslabs.com/learn/0.7/getting_started/)
 and the [Cloudflare Wrangler command (`npx wrangler`)](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
 There is a `package-lock.json` file in the top-level directory containing the versions of Wrangler
 and its dependencies with which these deployments are tested. The command `npm ci` will install the same versions.
@@ -27,6 +28,10 @@ deployments to use the Dioxus project as a library.
 The deployments use `release` mode because Cloudflare Pages and Workers have an
 individual file size limit of 25 MiB. The `debug` builds of Dioxus projects
 quickly exceed this limit.
+
+Due to incompatibilities between Dioxus fullstack and WASM, hydration and
+incremental or static site generation are not supported. Server functions are
+only supported by using the independent `server-fn` crate directly.
 
 On a Cloudflare Free plan all these deployments will be free of any costs. A
 free site will have a [limit on the number of Worker requests served per day](https://developers.cloudflare.com/workers/platform/pricing/#workers).
