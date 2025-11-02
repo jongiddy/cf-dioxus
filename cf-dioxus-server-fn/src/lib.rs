@@ -12,10 +12,16 @@ mod wasm_workaround {
 
 #[event(start)]
 fn start() {
+    console_error_panic_hook::set_once();
+
     // See https://github.com/rustwasm/wasm-bindgen/issues/4446
     unsafe { wasm_workaround::__wasm_call_ctors() };
+
     // Explicitly register server functions
     server_fn::axum::register_explicit::<cf_dioxus::server_function::Multiply>();
+
+    // Force generation of the Router
+    LazyLock::force(&ROUTER);
 }
 
 #[event(fetch)]
@@ -24,8 +30,6 @@ async fn fetch(
     env: Env,
     _ctx: Context,
 ) -> worker::Result<http::Response<axum::body::Body>> {
-    console_error_panic_hook::set_once();
-
     req.extensions_mut().insert(env);
 
     Ok(ROUTER.clone().call(req).await?)

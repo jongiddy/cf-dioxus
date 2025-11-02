@@ -1,9 +1,12 @@
 use worker::{event, Context, Env, HttpRequest, HttpResponse};
 
+#[event(start)]
+fn start() {
+    console_error_panic_hook::set_once();
+}
+
 #[event(fetch)]
 async fn fetch(req: HttpRequest, env: Env, _ctx: Context) -> worker::Result<HttpResponse> {
-    console_error_panic_hook::set_once();
-
     let uri = req.uri();
 
     // Usually static resources will be returned without invoking the

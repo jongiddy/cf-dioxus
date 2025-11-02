@@ -2,14 +2,17 @@ use cf_dioxus::api::{MultiplyRequest, MultiplyResponse};
 use futures::stream;
 use worker::{event, Context, Env};
 
+#[event(start)]
+fn start() {
+    console_error_panic_hook::set_once();
+}
+
 #[event(fetch)]
 async fn fetch(
     req: http::Request<worker::Body>,
     env: Env,
     _ctx: Context,
 ) -> worker::Result<http::Response<worker::Body>> {
-    console_error_panic_hook::set_once();
-
     let uri = req.uri();
 
     match uri.path() {

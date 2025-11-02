@@ -5,14 +5,19 @@ use cf_dioxus::api::{MultiplyRequest, MultiplyResponse};
 use tower_service::Service as _;
 use worker::{event, Context, Env};
 
+#[event(start)]
+fn start() {
+    console_error_panic_hook::set_once();
+
+    LazyLock::force(&ROUTER);
+}
+
 #[event(fetch)]
 async fn fetch(
     mut req: http::Request<worker::Body>,
     env: Env,
     _ctx: Context,
 ) -> worker::Result<http::Response<axum::body::Body>> {
-    console_error_panic_hook::set_once();
-
     req.extensions_mut().insert(env);
 
     Ok(ROUTER.clone().call(req).await?)
