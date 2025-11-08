@@ -1,13 +1,10 @@
 Cloudflare Pages are an easy way to deploy a self-contained Dioxus app that does
 not make calls back to the origin.
 
-The disadvantages of Cloudflare Pages are that:
-- The Dioxus `fullstack` feature does not work with Cloudflare Pages and it is
-not simple to make calls back to the origin that are written in Rust.
-Pages Functions are designed to work for simple JavaScript calls.
-- The bundle must be manually built before each deployment.
-- Cloudflare's future development efforts are focussed on
-[Workers over Pages](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/).
+You must manually build the Dioxus project before deployment to Cloudflare Pages.
+An advantage of using Cloudflare Workers is that they can be configured to
+automatically build the Dioxus project, ensuring that the most recent build is
+always deployed.
 
 # Building for Cloudflare Pages
 
@@ -16,7 +13,6 @@ Pages Functions are designed to work for simple JavaScript calls.
 ```sh
 $ npx wrangler pages project create cf-dioxus-pages
 
- ⛅️ wrangler 4.22.0
 ───────────────────
 ✔ Enter the production branch name: … production
 ✨ Successfully created the 'cf-dioxus-pages' project. It will be available at https://cf-dioxus-pages-4ax.pages.dev/ once you create your first deployment.
@@ -65,4 +61,4 @@ $ npx wrangler pages deploy
 
 This will provide a link to a pages.dev website.
 
-To publish the site to a non-dev domain go to your Cloudflare account, click on Compute (Workers) then click on the pages site (e.g. my-site-pages), click on Custom Domains, and add a domain from your Cloudflare-managed domains (e.g. `www.example.com/*`).
+To publish the site to a non-dev domain go to your Cloudflare account, click on Compute (Workers) then click on the pages site (e.g. cf-dioxus-pages), click on Custom Domains, and add a domain from your Cloudflare-managed domains (e.g. `www.example.com/*`).

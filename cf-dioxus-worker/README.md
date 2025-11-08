@@ -1,7 +1,7 @@
 A simple worker that mimics the Cloudflare Pages installation, serving static assets only.
 
 The advantages of this approach over Pages include:
-- the Dioxus project is bundled before deployment, ensuring that you see the latest build.
+- the Dioxus project is bundled before deployment, ensuring that you always deploy the latest build.
 - it is simple to add API or server functions later.
 
 This directory was created using the command
