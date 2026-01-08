@@ -31,7 +31,7 @@ fn Home() -> Element {
     #[cfg(not(any(feature = "api", feature = "server-fn")))]
     let answer = use_memo(move || match factor1().checked_mul(factor2()) {
         Some(product) => format!("= {product}"),
-        None => "overflow".to_string(),
+        None => format!("overflow"),
     });
 
     // With the `api` feature enabled, call the `api::multiply` function that performs
@@ -39,14 +39,11 @@ fn Home() -> Element {
     #[cfg(feature = "api")]
     let answer = {
         let api_call = use_resource(move || api::multiply(factor1(), factor2()));
-        let mut answer = use_signal(|| "= ?".to_string());
         // Transform the API `Result<i32, String>` to a `String`
-        use_effect(move || {
-            answer.set(match &*api_call.read() {
-                Some(Ok(product)) => format!("= {product}"),
-                Some(Err(string_err)) => string_err.clone(),
-                None => "= ?".to_string(),
-            });
+        let answer = use_memo(move || match &*api_call.read() {
+            Some(Ok(product)) => format!("= {product}"),
+            Some(Err(string_err)) => string_err.clone(),
+            None => format!("= ?"),
         });
         // While the API call is in progress, dim the previous answer.
         use_effect(move || {
@@ -63,14 +60,11 @@ fn Home() -> Element {
     #[cfg(feature = "server-fn")]
     let answer = {
         let api_call = use_resource(move || server_function::multiply(factor1(), factor2()));
-        let mut answer = use_signal(|| "= ?".to_string());
         // Transform the server function `Result<i32, ServerFnError>` to a `String`
-        use_effect(move || {
-            answer.set(match &*api_call.read() {
-                Some(Ok(product)) => format!("= {product}"),
-                Some(Err(server_fn_err)) => server_fn_err.to_string(),
-                None => "= ?".to_string(),
-            });
+        let answer = use_memo(move || match &*api_call.read() {
+            Some(Ok(product)) => format!("= {product}"),
+            Some(Err(server_fn_err)) => server_fn_err.to_string(),
+            None => format!("= ?"),
         });
         // While the server function is in progress, dim the previous answer.
         use_effect(move || {
