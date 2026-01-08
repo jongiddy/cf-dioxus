@@ -24,39 +24,39 @@ async fn fetch(
                     .status(http::StatusCode::METHOD_NOT_ALLOWED)
                     .body(worker::Body::empty())?);
             }
-            let Some(query) = uri.query() else {
-                return Ok(http::Response::builder()
+            let query = match uri.query() {
+                Some(q) => q,
+                None => return Ok(http::Response::builder()
                     .status(http::StatusCode::BAD_REQUEST)
                     .body(worker::Body::from_stream(stream::once(async {
                         Ok::<_, worker::Error>("expected query parameters")
-                    }))?)?);
+                    }))?)?),
             };
-            let Ok(request) = serde_urlencoded::from_str::<MultiplyRequest>(query) else {
-                return Ok(http::Response::builder()
-                    .status(http::StatusCode::BAD_REQUEST)
-                    .body(worker::Body::empty())?);
-            };
-
-            match request.factor1.checked_mul(request.factor2) {
-                Some(product) => {
-                    let body = serde_json::to_string(&MultiplyResponse { product })?;
-                    Ok(http::Response::builder()
-                        .header(http::header::CONTENT_TYPE, "application/json")
-                        .body(worker::Body::from_stream(stream::once(async {
-                            Ok::<_, worker::Error>(body)
-                        }))?)?)
-                }
-                None => Ok(http::Response::builder()
+            let request = match serde_urlencoded::from_str::<MultiplyRequest>(query) {
+                Ok(req) => req,
+                Err(_) => return Ok(http::Response::builder()
                     .status(http::StatusCode::BAD_REQUEST)
                     .body(worker::Body::empty())?),
-            }
+            };
+
+            let product = match request.factor1.checked_mul(request.factor2) {
+                Some(p) => p,
+                None => return Ok(http::Response::builder()
+                    .status(http::StatusCode::BAD_REQUEST)
+                    .body(worker::Body::empty())?),
+            };
+
+            let body = serde_json::to_string(&MultiplyResponse { product })?;
+            Ok(http::Response::builder()
+                .header(http::header::CONTENT_TYPE, "application/json")
+                .body(worker::Body::from_stream(stream::once(async {
+                    Ok::<_, worker::Error>(body)
+                }))?)?)
         }
 
-        path if path.starts_with("/api/") => {
-            Ok(http::Response::builder()
-                .status(http::StatusCode::NOT_FOUND)
-                .body(worker::Body::empty())?)
-        }
+        path if path.starts_with("/api/") => Ok(http::Response::builder()
+            .status(http::StatusCode::NOT_FOUND)
+            .body(worker::Body::empty())?),
 
         _ => {
             // Usually static resources will be returned without invoking the
