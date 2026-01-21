@@ -11,7 +11,7 @@ This repo consists of the following directories:
 
 Each directory contains instructions on deploying locally for testing and deploying to Cloudflare.
 
-The deployments are tested with Dioxus v0.7.2. For other releases, check for a branch in this repo with
+The deployments are tested with Dioxus v0.7.3. For other releases, check for a branch in this repo with
 the required Dioxus version.
 
 The deployments assume that you have installed the [Dioxus CLI (`dx`)](https://dioxuslabs.com/learn/0.7/getting_started/)
